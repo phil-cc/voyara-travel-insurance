@@ -16,8 +16,22 @@ header { background: var(--brand); color: white; padding: 0.75rem 1rem; }
 header strong { font-size: 1.25rem; letter-spacing: 0.02em; }
 header span { opacity: 0.8; margin-left: 0.5rem; font-size: 0.85rem; }
 header .header-nav { float: right; }
-header .header-nav a { color: white; font-weight: 600; text-decoration: none; }
-header .header-nav a:hover, header .header-nav a:focus-visible { text-decoration: underline; }
+/* One look for every header control, whether it is a link (<a>) or a button. */
+header .header-button {
+  display: inline-block;
+  background: none;
+  border: 1px solid #ffffff80;
+  border-radius: 6px;
+  color: white;
+  padding: 0.2rem 0.7rem;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+}
+header .header-button:hover, header .header-button:focus-visible { background: #ffffff1f; }
 main { max-width: 960px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
 h1 { font-size: 1.5rem; margin: 0 0 1rem; }
 h2 { font-size: 1.1rem; margin: 1.5rem 0 0.5rem; }

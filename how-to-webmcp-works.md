@@ -41,7 +41,7 @@ There is no server to connect to. The page itself registers tools when it loads,
 | 5 | REST API | Quote service | Validated trip details, the same entry point the MCP server uses |
 | 6 | Quote service | Page handler | The re-priced quote, with disclosure |
 | 7 | Page handler | Screen | Updated card, price or form field, highlighted so the customer can see the change |
-| 8 | Adapter | In-browser agent | The result, sent only after the browser has painted the change |
+| 8 | Adapter | In-browser agent | The result, sent only after the browser paints the change |
 
 When a person clicks the same buttons, the same page functions run. The only difference is the channel label, `web` instead of `webmcp`.
 
@@ -51,12 +51,12 @@ When a person clicks the same buttons, the same page functions run. The only dif
 | --- | --- | --- |
 | `/quote/` | `fill_trip_details` | Destination, dates and traveller ages appear in the form |
 | `/quote/` | `add_traveller` | A new traveller row appears, and any age-cap notice updates |
-| `/quote/` | `get_form_state` | Nothing changes. The agent reads what is filled and what is missing. |
-| `/quote/` | `submit_quote_form` | The page moves to the results, as if Get Quote was clicked |
+| `/quote/` | `get_form_state` | Nothing changes. The agent reads which fields are complete and which are missing. |
+| `/quote/` | `submit_quote_form` | The page moves to the results, as if the customer clicked Get Quote |
 | `/quote/results/` | `get_displayed_quotes` | Nothing changes. The agent reads the tier prices on screen. |
-| `/quote/results/` | `select_tier` | The chosen tier card is highlighted |
+| `/quote/results/` | `select_tier` | The page highlights the chosen tier card |
 | `/quote/results/` | `set_excess` | The excess and total update |
-| `/quote/results/` | `toggle_pack` | The pack is added and the total updates, or a message explains why the pack is not allowed |
+| `/quote/results/` | `toggle_pack` | The page adds the pack and updates the total, or a message explains why the tier cannot have the pack |
 | `/quote/results/` | `explain_on_page` | The inclusion's detail panel opens |
 | `/quote/results/` | `proceed_to_checkout` | The page moves to checkout |
 | `/checkout/` | None | The customer reviews the policy and presses Pay |
@@ -82,24 +82,24 @@ Linh is on the quote page planning a ski trip for two adults and two children. S
 | 3 | `submit_quote_form` | Quote form page | The results page opens |
 | 4 | `get_displayed_quotes` | Results page, REST API, quote service | Four tier prices on screen |
 | 5 | `explain_on_page` | Results page, REST API | The rental vehicle excess panel opens: not covered on Explorer, $5,000 on Comprehensive |
-| 6 | `select_tier` | Results page | Comprehensive is highlighted |
-| 7 | `toggle_pack` | Results page, REST API, quote service | Snow Pack is ticked and the total rises by $79 |
+| 6 | `select_tier` | Results page | The page highlights Comprehensive |
+| 7 | `toggle_pack` | Results page, REST API, quote service | The page ticks Snow Pack and the total rises by $79 |
 | 8 | `proceed_to_checkout` | Results page, REST API, quote service | The checkout page opens |
 | 9 | None | Checkout page | Linh reviews the policy and presses Pay herself |
 
 ## Boundaries the design enforces
 
-| Boundary | How it is enforced |
+| Boundary | How the design enforces it |
 | --- | --- |
 | Agents cannot pay | The checkout page registers no tools. Pay needs a human click. |
-| The customer sees every change | The adapter returns a result only after the change is painted on screen |
+| The customer sees every change | The adapter returns a result only after the browser paints the change on screen |
 | No browser support needed | The adapter checks for `navigator.modelContext` and steps aside when it is missing |
 | Only first-party pages | The adapter refuses to register tools inside a frame |
-| Untrusted text is checked | Free-text destinations must match the allow-list, both in the page and again in the REST API |
-| Rules live in one place | Page tools hold no pricing or eligibility logic. Ineligible packs are rejected by the quote service, and the page shows the reason. |
-| API churn is contained | The browser API is still changing, so only the adapter knows its names |
+| Voyara checks untrusted text | Free-text destinations must match the allow-list, both in the page and again in the REST API |
+| Rules live in one place | Page tools hold no pricing or eligibility logic. The quote service rejects ineligible packs, and the page shows the reason. |
+| Browser API changes stay in one file | The browser API is still changing, so only the adapter knows its names |
 
-## How it is tested without Chrome's WebMCP
+## How the tests work without Chrome's WebMCP
 
 Real WebMCP needs Chrome 149 or later with the origin trial or a browser flag. The tests use a stand-in instead.
 

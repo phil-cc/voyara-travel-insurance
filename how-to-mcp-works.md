@@ -2,7 +2,7 @@
 
 > *(Detail level: 2 - Component Map. The walkthrough section is at level 4 - Full Implementation.)*
 
-This page explains how a headless AI agent, such as a chat assistant, gets a travel insurance quote from Voyara through the Model Context Protocol (MCP). It names the parts involved and how data moves between them. The [walkthrough](#walkthrough-how-a-tools-parameters-reach-the-model-and-come-back) section then zooms in to show the real schema and messages for one tool call.
+This page explains how a headless AI agent, such as a chat assistant, gets a Voyara travel insurance quote through the Model Context Protocol (MCP). It names the parts involved and shows how data moves between them. The [walkthrough](#walkthrough-how-a-tools-parameters-reach-the-model-and-come-back) section then shows the real schema and messages for one tool call.
 
 Voyara is an example system. The insurer, its prices and its policy wording are all fictitious.
 
@@ -22,7 +22,7 @@ A server offers three kinds of capability:
 - **Resources** are documents the agent can read.
 - **Prompts** are reusable conversation starters.
 
-The agent decides when to call a tool. The server decides what the tool is allowed to do.
+The agent decides when to call a tool. The server decides what the tool can do.
 
 ## Where MCP sits in Voyara
 
@@ -35,7 +35,7 @@ Voyara runs one Python process with two front doors. The `/mcp` door is for agen
 | Protection | Rate limiter | `server/src/voyara/ratelimit.py` | Allows 60 MCP calls per minute per client IP, then answers HTTP 429 |
 | Protection | DNS-rebinding guard | Built into the MCP SDK | Accepts only localhost Host headers by default |
 | Protocol | MCP server | `server/src/voyara/mcp_server.py` | Declares the tools, resources and prompt, and turns rule failures into tool errors |
-| Business logic | Quote service | `server/src/voyara/quotes.py` | Creates, updates and retrieves quotes, starts checkout, keeps the audit trail |
+| Business logic | Quote service | `server/src/voyara/quotes.py` | Creates, updates and gets quotes, starts checkout, keeps the audit trail |
 | Business logic | Rules | `server/src/voyara/rules.py` | Age caps, pack eligibility, tier recommendation |
 | Business logic | Pricing | `server/src/voyara/pricing.py` | Works out the premium from region, days, ages, tier, excess and packs |
 | Business logic | Catalogue and product views | `server/src/voyara/catalogue.py`, `products.py` | Tier inclusions, packs, PDS and TMD text, disclosure wording |
@@ -50,7 +50,7 @@ Every MCP call follows the same path through the components above.
 | 1 | MCP client | `/mcp` endpoint | A JSON-RPC message naming a tool and its arguments |
 | 2 | Endpoint | Rate limiter | The request, checked against the client's call count for the last minute |
 | 3 | Rate limiter | MCP server | Requests within the limit pass. Requests over it get HTTP 429 with `Retry-After`. |
-| 4 | MCP server | Quote service, rules or product views | Validated arguments. Enums such as tier, region and pack are checked against the published tool schema. |
+| 4 | MCP server | Quote service, rules or product views | Arguments, after the SDK checks them against the published tool schema. For example, tier, region and pack must be enum values. |
 | 5 | Quote service | Rules and pricing | Trip details, to check eligibility and price the trip |
 | 6 | Quote service | MCP server | A result with the premium, a `disclosure` block and the `catalogue_version` |
 | 7 | MCP server | MCP client | The result as structured content. A broken rule comes back as a tool error with the reason. |
@@ -73,7 +73,7 @@ The server runs in stateless mode. Each call stands alone, and the protocol keep
 | `get_quote` | Reads | Quote service |
 | `start_checkout` | Writes a checkout session | Quote service |
 
-Read-only tools are marked with MCP read-only annotations, so a host can call them without asking the person first.
+Voyara marks the read-only tools with MCP read-only annotations, so a host can call them without asking the person first.
 
 ### Resources and prompt
 
@@ -87,7 +87,7 @@ Read-only tools are marked with MCP read-only annotations, so a host can call th
 
 > *(Detail level: 4 - Full Implementation)*
 
-This section follows one tool, `create_quote`, through every layer. It starts at the Python function, goes up to the language model's prompt, then follows the model's answer back down to the quote service. The JSON below was captured from this server, trimmed with `...` where noted.
+This section follows one tool, `create_quote`, through every layer. It starts at the Python function, goes up to the language model's prompt, then follows the model's answer back down to the quote service. The JSON below comes from this server, with `...` in place of trimmed parts.
 
 ```mermaid
 sequenceDiagram
@@ -206,9 +206,9 @@ The response contains one entry per tool. This is the `create_quote` entry, with
 }
 ```
 
-`end_date` and `excess` are trimmed above; they follow the same pattern. The response also carries an `outputSchema` that describes the result as an object.
+The example above leaves out `end_date` and `excess`. They follow the same pattern. The response also carries an `outputSchema` that describes the result as an object.
 
-The parameters have generated titles, such as "Start Date", but no descriptions. Everything the model knows about a parameter comes from its name, its type and enum values, and the tool description. Adding `Field(description=...)` to a parameter would give the model more guidance. This repo does that on `trip_cost` in `recommend_tier`.
+Each parameter has a generated title, such as "Start Date", but no description. Everything the model knows about a parameter comes from its name, its type and enum values, and the tool description. Adding `Field(description=...)` to a parameter would give the model more guidance. This repo does that on `trip_cost` in `recommend_tier`.
 
 ### Hop 3: the host puts the schema in the model's prompt
 
@@ -239,7 +239,7 @@ The model maps the conversation onto the schema:
 | Customer said | Parameter | How the model gets there |
 | --- | --- | --- |
 | Nepal | `destination_region: "asia"` | Picks one of the four enum values. The MCP channel takes a region, not a country. |
-| Three weeks in April | `start_date: "2027-04-01"`, `end_date: "2027-04-21"` | Turns relative dates into the `date` format. A good agent confirms exact dates first. |
+| Three weeks in April | `start_date: "2027-04-01"`, `end_date: "2027-04-21"` | Turns relative dates into the `date` format. A good agent checks the exact dates with the customer first. |
 | I'm 27 | `traveller_ages: [27]` | An array of integers between 0 and 120 |
 | Trekking to Everest Base Camp | `tier: "explorer"`, `packs: ["adventure"]` | Taken from the earlier `recommend_tier` result |
 | Nothing about excess | `excess` left out | It is optional, so the tier's standard excess applies |
@@ -293,9 +293,9 @@ The SDK checks the arguments against the same types that produced the schema in 
 
 - `"2027-04-01"` becomes a Python `date`.
 - `[27]` becomes a `list[int]` checked against 0 to 120.
-- `ctx` is filled in with the request context, which holds the client's name if the client sent one.
+- The SDK fills `ctx` with the request context, which holds the client's name if the client sent one.
 
-A value outside the schema is rejected before any Voyara code runs. This is what comes back if the model sends `"tier": "platinum"`:
+The SDK rejects a value outside the schema before any Voyara code runs. This is what comes back if the model sends `"tier": "platinum"`:
 
 ```json
 {
@@ -336,7 +336,7 @@ The checks therefore run in two layers:
 
 ### Hop 7: the result travels back up
 
-The tool returns a `dict`. The SDK sends it two ways in the same result: as `structuredContent` for clients that read JSON, and as a text copy in `content` for clients that only pass text to the model. This is the result, trimmed:
+The tool returns a `dict`. The SDK sends it two ways in the same result. `structuredContent` is for clients that read JSON. A text copy in `content` is for clients that only pass text to the model. This is the result, trimmed:
 
 ```json
 {
@@ -371,7 +371,7 @@ The tool returns a `dict`. The SDK sends it two ways in the same result: as `str
 }
 ```
 
-The host gives this to the model as the tool result, for example a `tool_result` block in the Claude Messages API. The model then writes its answer to the customer. It shows $312, says what Explorer with Adventure Pack covers, and includes the disclosure, because both the tool description and the server instructions ask for it. Money amounts travel as strings such as `"312.00"`, so no layer rounds them.
+The host gives this to the model as the tool result, for example a `tool_result` block in the Claude Messages API. The model then writes its answer to the customer. It shows $312, says what Explorer with Adventure Pack covers, and includes the disclosure. It includes the disclosure because both the tool description and the server instructions ask for it. Money amounts travel as strings such as `"312.00"`, so no layer rounds them.
 
 ### What each layer adds and removes
 
@@ -386,7 +386,7 @@ The host gives this to the model as the tool result, for example a `tool_result`
 
 ## A worked journey: Priya trekking in Nepal
 
-Priya, 27, asks her assistant what insurance she needs for three weeks trekking to Everest Base Camp. No browser is involved.
+Priya, 27, asks her assistant what insurance she needs for three weeks trekking to Everest Base Camp. No browser takes part.
 
 | Step | Tool | Component reached | Outcome |
 | --- | --- | --- | --- |
@@ -399,7 +399,7 @@ Priya, 27, asks her assistant what insurance she needs for three weeks trekking 
 
 ## Boundaries the design enforces
 
-| Boundary | How it is enforced |
+| Boundary | How the design enforces it |
 | --- | --- |
 | Agents cannot buy | No tool takes payment. `start_checkout` only returns a link to a page that needs a human click. |
 | General advice only | `recommend_tier` matches trip features to product rules and always returns a note saying so |

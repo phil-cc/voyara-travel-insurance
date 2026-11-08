@@ -79,10 +79,10 @@ adapters over it, which is what keeps the two channels in step.
 New to MCP or WebMCP, or curious how this example system fits together? Two guides walk through
 each channel component by component, with a worked customer journey:
 
-| Guide | Explains |
-| --- | --- |
-| [How MCP works](how-to-mcp-works.md) | How a headless agent quotes through the MCP server, plus a step-by-step walkthrough of how a tool's parameters reach the model's prompt and travel back down to the quote service |
-| [How WebMCP works](how-to-webmcp-works.md) | How the agent in a customer's browser drives the quote pages, and how that is tested without Chrome's WebMCP |
+| Guide                                      | Explains                                                                                                                                                                          |
+| ------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [How MCP works](how-to-mcp-works.md)       | How a headless agent quotes through the MCP server, plus a step-by-step walkthrough of how a tool's parameters reach the model's prompt and travel back down to the quote service |
+| [How WebMCP works](how-to-webmcp-works.md) | How the agent in a customer's browser drives the quote pages, and how that is tested without Chrome's WebMCP                                                                      |
 
 ## What agents can do
 

@@ -162,3 +162,27 @@ code { font-size: 0.9em; }
 @media (prefers-reduced-motion: reduce) {
   .node { transition: none; }
 }
+
+/* -- "How to use this page" guide ------------------------------------------- */
+.help-overlay { position: fixed; inset: 0; z-index: 100; }
+.help-spot {
+  position: fixed;
+  border-radius: 14px;
+  box-shadow: 0 0 0 4px #f5b301, 0 0 0 100vmax #0f1b2dcc;
+  transition: top 0.25s, left 0.25s, width 0.25s, height 0.25s;
+  pointer-events: none;
+}
+.help-card {
+  position: fixed;
+  width: min(380px, calc(100vw - 28px));
+  background: white;
+  border-radius: 12px;
+  padding: 1rem 1.1rem;
+  box-shadow: 0 10px 30px #0006;
+}
+.help-card h2 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+.help-card p { margin: 0 0 0.9rem; line-height: 1.5; }
+.help-actions { display: flex; gap: 0.4rem; align-items: center; }
+.help-count { margin-right: auto; color: var(--muted); font-size: 0.8rem; }
+.help-skip { border-color: var(--line); color: var(--muted); }
+@media (prefers-reduced-motion: reduce) { .help-spot { transition: none; } }
