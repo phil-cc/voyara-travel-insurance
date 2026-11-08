@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>How it works - Voyara</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+    <link rel="stylesheet" href="/src/flow.css" />
+  </head>
+  <body>
+    <header><strong>Voyara</strong><span>How MCP and WebMCP work (fictitious demo)</span></header>
+    <main class="flow">
+      <p class="back"><a href="/quote/">&lt; Back to the quote form</a></p>
+      <h1>How agents get a quote: MCP and WebMCP, step by step</h1>
+      <p class="lede">
+        Voyara exposes one Quote API to AI agents in two ways. A headless agent such as Claude talks to an
+        <strong>MCP server</strong> over HTTP. An agent built into the browser uses <strong>WebMCP</strong> tools that
+        the quote page registers itself. Pick a tour and press <kbd>Next</kbd>. Every step sends real requests to the
+        running server and shows exactly what went over the wire.
+      </p>
+
+      <div class="tours" role="tablist" aria-label="Tour">
+        <button type="button" role="tab" data-tour="mcp">1. MCP: Claude quotes a Nepal trek</button>
+        <button type="button" role="tab" data-tour="webmcp">2. WebMCP: the browser agent fills the form</button>
+        <button type="button" role="tab" data-tour="both">3. Same trip, both channels</button>
+      </div>
+
+      <p id="offline" class="notice" role="alert" hidden>
+        The server is not answering. Start it with <code>cd server &amp;&amp; uv run voyara-server</code>, then press
+        Run again.
+      </p>
+
+      <div class="stage-wrap">
+        <div class="stage" id="stage">
+          <svg class="wires" id="wires" aria-hidden="true"></svg>
+          <div class="node" data-node="customer"><b>Customer</b><small>a person</small></div>
+          <div class="node" data-node="agent"><b>Claude</b><small>headless agent + MCP client</small></div>
+          <div class="node" data-node="mcp"><b>MCP server</b><small>POST /mcp · mcp_server.py</small></div>
+          <div class="node" data-node="service"><b>QuoteService</b><small>rules · pricing · quotes</small></div>
+          <div class="node" data-node="bagent"><b>Browser agent</b><small>built into Chrome</small></div>
+          <div class="node" data-node="modelctx"><b>navigator.modelContext</b><small>WebMCP browser API</small></div>
+          <div class="node" data-node="page"><b>Quote page</b><small>pages/*.ts · adapter.ts</small></div>
+          <div class="node" data-node="api"><b>Quote API</b><small>/api · api.py</small></div>
+          <div class="legend">
+            <span><i class="dot req"></i>request</span>
+            <span><i class="dot res"></i>response</span>
+            <span><i class="dot local"></i>in the browser, no network</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flow-grid">
+        <section class="step-panel" aria-live="polite">
+          <ol id="step-list" class="step-list"></ol>
+          <h2 id="step-title"></h2>
+          <div id="step-body" class="step-body"></div>
+          <p id="step-code" class="step-code"></p>
+          <div class="controls">
+            <button type="button" id="prev">Back</button>
+            <button type="button" id="replay">Replay</button>
+            <button type="button" id="next" class="primary">Next</button>
+            <label class="auto"><input type="checkbox" id="autoplay" /> Autoplay</label>
+            <button type="button" id="reset" class="ghost">Restart tour</button>
+          </div>
+        </section>
+
+        <section class="screen-panel">
+          <h2 id="screen-title">Customer's screen</h2>
+          <div id="screen" class="screen"></div>
+        </section>
+      </div>
+
+      <section class="model-panel" id="model-panel" hidden>
+        <h2>Inside the agent: what the model sees</h2>
+        <p class="hint">
+          The model never speaks MCP or WebMCP. The agent translates both ways: tool definitions into the model's
+          <code>tools</code> list and system prompt, the model's <code>tool_use</code> into a tool call, and the result
+          back into a <code>tool_result</code>. Model-side payloads follow the Anthropic Messages API format and are
+          illustrative; the tool payloads inside them are the real ones from this run.
+        </p>
+        <p id="model-note" class="model-note"></p>
+        <div id="model" class="model"></div>
+      </section>
+
+      <section class="wire-panel">
+        <h2>On the wire for this step</h2>
+        <p class="hint">Real requests and responses. JSON-RPC goes to <code>/mcp</code>, REST to <code>/api</code>. WebMCP tool calls stay inside the browser.</p>
+        <div id="wire" class="wire"></div>
+      </section>
+    </main>
+    <script type="module" src="/src/pages/flow.ts"></script>
+  </body>
+</html>

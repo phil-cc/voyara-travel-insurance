@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Checkout - Voyara</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header><strong>Voyara</strong><span>Travel insurance (fictitious demo)</span></header>
+    <main>
+      <h1>Review and pay</h1>
+      <p id="status" role="status">Loading...</p>
+      <section id="summary" class="panel" hidden>
+        <p><strong id="policy-name"></strong></p>
+        <p id="trip"></p>
+        <p id="extras"></p>
+        <p>Total: <span id="total" class="total"></span></p>
+        <button type="button" id="pay" class="primary">Pay</button>
+        <p id="pay-message" class="notice" role="status" hidden></p>
+      </section>
+      <div id="disclosure" class="disclosure"></div>
+    </main>
+    <script type="module" src="/src/pages/checkout.ts"></script>
+  </body>
+</html>

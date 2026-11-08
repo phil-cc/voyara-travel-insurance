@@ -1,0 +1,164 @@
+/* Styles for the /flow walkthrough only. Shared tokens come from styles.css. */
+:root {
+  --req: #0b6e6e;
+  --res: #c27c0e;
+  --local: #6d4bc4;
+}
+
+main.flow { max-width: 1180px; }
+.back { margin: 0 0 0.75rem; }
+.back a { color: var(--brand); font-weight: 600; text-decoration: none; }
+.back a:hover, .back a:focus-visible { text-decoration: underline; }
+.lede { color: var(--muted); max-width: 70ch; line-height: 1.5; }
+kbd { border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 4px; padding: 0 0.3rem; font-size: 0.85em; background: white; }
+code { font-size: 0.9em; }
+
+.tours { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0; }
+.tours button[aria-selected='true'] { background: var(--brand); color: white; }
+
+/* -- diagram ----------------------------------------------------------------- */
+.stage-wrap { overflow-x: auto; background: white; border: 1px solid var(--line); border-radius: 12px; }
+.stage {
+  position: relative;
+  min-width: 860px;
+  display: grid;
+  grid-template-columns: 0.8fr 1fr 1.1fr 1fr 1fr;
+  grid-template-areas:
+    'customer agent    mcp      mcp  service'
+    'customer bagent   modelctx page api';
+  gap: 3.5rem 2rem;
+  padding: 2rem 1.5rem 2.75rem;
+}
+.wires { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.wires line { stroke: var(--line); stroke-width: 2; }
+.wires line.hot { stroke: var(--ink); stroke-dasharray: 5 4; }
+.wires line.dim { opacity: 0.3; }
+
+.node {
+  position: relative;
+  z-index: 1;
+  align-self: center;
+  justify-self: center;
+  width: 100%;
+  max-width: 190px;
+  background: white;
+  border: 2px solid var(--line);
+  border-radius: 10px;
+  padding: 0.6rem 0.75rem;
+  text-align: center;
+  transition: opacity 0.3s, border-color 0.3s, box-shadow 0.3s;
+}
+.node b { display: block; font-size: 0.95rem; }
+.node small { display: block; color: var(--muted); font-size: 0.75rem; margin-top: 0.15rem; }
+.node[data-node='customer'] { grid-area: customer; }
+.node[data-node='agent'] { grid-area: agent; }
+.node[data-node='mcp'] { grid-area: mcp; max-width: 230px; }
+.node[data-node='service'] { grid-area: service; border-color: var(--brand); }
+.node[data-node='bagent'] { grid-area: bagent; }
+.node[data-node='modelctx'] { grid-area: modelctx; }
+.node[data-node='page'] { grid-area: page; }
+.node[data-node='api'] { grid-area: api; }
+.node.dim { opacity: 0.35; }
+.node.active { border-color: var(--ink); box-shadow: 0 0 0 4px #f5b30155; }
+
+.legend { position: absolute; left: 1.5rem; bottom: 0.6rem; display: flex; gap: 1rem; font-size: 0.75rem; color: var(--muted); }
+.dot { display: inline-block; width: 0.7rem; height: 0.7rem; border-radius: 50%; margin-right: 0.3rem; vertical-align: -1px; }
+.dot.req { background: var(--req); }
+.dot.res { background: var(--res); }
+.dot.local { background: var(--local); }
+
+.packet {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  top: 0;
+  padding: 0.2rem 0.55rem;
+  border-radius: 999px;
+  color: white;
+  font: 600 0.75rem/1.3 ui-monospace, SFMono-Regular, Menlo, monospace;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 2px 6px #0003;
+}
+.packet.req { background: var(--req); }
+.packet.res { background: var(--res); }
+.packet.local { background: var(--local); }
+
+/* -- step and screen panels -------------------------------------------------- */
+.flow-grid { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 1.5rem; margin-top: 1.5rem; }
+@media (max-width: 860px) { .flow-grid { grid-template-columns: 1fr; } }
+.step-panel, .screen-panel, .wire-panel { background: white; border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.25rem; }
+.step-panel h2, .screen-panel h2, .wire-panel h2 { margin-top: 0.25rem; }
+
+.step-list { display: flex; flex-wrap: wrap; gap: 0.35rem; list-style: none; padding: 0; margin: 0 0 0.75rem; }
+.step-list button { padding: 0.15rem 0.6rem; font-size: 0.8rem; border-color: var(--line); color: var(--muted); }
+.step-list button.done { border-color: var(--brand); color: var(--brand); }
+.step-list button[aria-current='step'] { background: var(--brand); border-color: var(--brand); color: white; }
+
+.step-body { line-height: 1.55; }
+.step-body p { margin: 0 0 0.75rem; }
+.step-body ul { margin: 0 0 0.75rem; padding-left: 1.25rem; }
+.step-code { font-size: 0.85rem; color: var(--muted); }
+.controls { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 1rem; }
+.controls .auto { display: flex; gap: 0.35rem; align-items: center; font-weight: normal; margin: 0; }
+.controls .ghost { margin-left: auto; border-color: var(--line); color: var(--muted); }
+.controls button[aria-busy='true'] { opacity: 0.6; cursor: progress; }
+
+.screen { min-height: 14rem; }
+.chat { display: flex; flex-direction: column; gap: 0.5rem; }
+.bubble { max-width: 90%; padding: 0.55rem 0.8rem; border-radius: 12px; line-height: 1.45; font-size: 0.92rem; }
+.bubble.user { align-self: flex-end; background: var(--brand); color: white; border-bottom-right-radius: 3px; }
+.bubble.bot { align-self: flex-start; background: #eef2f6; border-bottom-left-radius: 3px; }
+.bubble.tool { align-self: flex-start; background: transparent; color: var(--muted); font: 0.8rem ui-monospace, Menlo, monospace; padding: 0 0.25rem; }
+.bubble small { display: block; color: var(--muted); margin-top: 0.35rem; }
+
+.tab { border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.tab-bar { background: #eef2f6; padding: 0.35rem 0.6rem; font: 0.78rem ui-monospace, Menlo, monospace; color: var(--muted); }
+.tab-body { padding: 0.75rem; }
+.tab-body .field { margin-bottom: 0.6rem; }
+.tab-body .mini { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.tab-body .pill { border: 1px solid var(--line); border-radius: 6px; padding: 0.3rem 0.55rem; background: white; min-width: 3rem; }
+.tab-body .cards { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 0.5rem; }
+.tab-body .card { padding: 0.6rem; }
+.tab-body .card h3 { margin: 0; font-size: 0.9rem; }
+.tab-body .card .premium { font-size: 1.15rem; }
+.tools-note { font-size: 0.8rem; color: var(--muted); margin-top: 0.6rem; }
+
+.compare { width: 100%; }
+.compare td.same { color: var(--brand); font-weight: 700; }
+
+/* -- model payloads --------------------------------------------------------- */
+.model-panel { margin-top: 1.5rem; background: white; border: 1px solid var(--line); border-radius: 12px; padding: 1rem 1.25rem; border-left: 4px solid var(--local); }
+.model-panel h2 { margin-top: 0.25rem; }
+.model-note { background: #f3effc; border-radius: 6px; padding: 0.6rem 0.8rem; line-height: 1.5; }
+.model { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 0.75rem; }
+.model-block h4 { margin: 0 0 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--local); }
+.model-block pre { margin: 0; max-height: 26rem; overflow: auto; background: #1b1530; color: #ece8f8; padding: 0.6rem 0.75rem; border-radius: 6px; font-size: 0.78rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+
+/* -- wire log ---------------------------------------------------------------- */
+.wire-panel { margin-top: 1.5rem; }
+.hint { color: var(--muted); font-size: 0.85rem; margin-top: 0; }
+.wire details { padding: 0.4rem 0.6rem; }
+.wire summary { font: 600 0.85rem ui-monospace, Menlo, monospace; }
+.wire summary .tag { display: inline-block; font-size: 0.7rem; padding: 0 0.4rem; border-radius: 4px; color: white; margin-right: 0.4rem; }
+.tag.http { background: var(--req); }
+.tag.webmcp { background: var(--local); }
+.wire .pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0.75rem; margin-top: 0.5rem; }
+@media (max-width: 760px) { .wire .pair { grid-template-columns: 1fr; } }
+.wire h4 { margin: 0 0 0.25rem; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); }
+.wire pre {
+  margin: 0;
+  max-height: 22rem;
+  overflow: auto;
+  background: #0f1b2d;
+  color: #e6edf6;
+  padding: 0.6rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.78rem;
+  line-height: 1.45;
+}
+.wire .empty { color: var(--muted); font-style: italic; }
+
+@media (prefers-reduced-motion: reduce) {
+  .node { transition: none; }
+}

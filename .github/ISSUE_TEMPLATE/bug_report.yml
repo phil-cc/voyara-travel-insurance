@@ -1,0 +1,50 @@
+name: Bug report
+description: Something behaves differently from the README or the PRD requirements
+title: "fix: "
+labels: [bug]
+body:
+  - type: dropdown
+    id: channel
+    attributes:
+      label: Channel
+      description: Which channel did you use?
+      options:
+        - MCP
+        - WebMCP
+        - Plain web
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Include the tool call, request or page actions, with the trip details used.
+      placeholder: |
+        1. Call create_quote with ...
+        2. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What you expected
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened
+      description: Paste any error output or the returned quote.
+    validations:
+      required: true
+  - type: input
+    id: requirement
+    attributes:
+      label: Related requirement
+      description: The README requirement this breaks, if any (R-01 to R-12).
+      placeholder: R-04
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Node version, uv version, and browser and version for WebMCP.

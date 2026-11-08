@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Get a quote - Voyara</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header>
+      <strong>Voyara</strong><span>Travel insurance (fictitious demo)</span>
+      <nav class="header-nav" aria-label="Site"><a href="/flow/">How it works</a></nav>
+    </header>
+    <main>
+      <h1>Get a travel insurance quote</h1>
+      <form id="quote-form" novalidate>
+        <div class="field">
+          <label for="destination">Destination</label>
+          <input id="destination" name="destination" list="destination-list" autocomplete="off" placeholder="e.g. Japan" />
+          <datalist id="destination-list"></datalist>
+        </div>
+        <div class="row">
+          <div class="field">
+            <label for="start-date">Departure date</label>
+            <input id="start-date" name="start_date" type="date" />
+          </div>
+          <div class="field">
+            <label for="end-date">Return date</label>
+            <input id="end-date" name="end_date" type="date" />
+          </div>
+        </div>
+        <fieldset class="field">
+          <legend>Travellers</legend>
+          <div id="travellers"></div>
+          <button type="button" id="add-traveller">Add traveller</button>
+        </fieldset>
+        <p id="eligibility" class="notice" role="status" hidden></p>
+        <ul id="errors" class="errors" role="alert" hidden></ul>
+        <button type="submit" id="get-quote" class="primary">Get Quote</button>
+      </form>
+    </main>
+    <script type="module" src="/src/pages/quote.ts"></script>
+  </body>
+</html>

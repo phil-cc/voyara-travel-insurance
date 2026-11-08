@@ -1,0 +1,41 @@
+name: Feature request
+description: Propose a new capability, so the approach can be agreed before code is written
+title: "feat: "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What can an agent or customer not do today?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposed approach
+      description: Which tools, routes or pages change, and how.
+    validations:
+      required: true
+  - type: checkboxes
+    id: areas
+    attributes:
+      label: Areas affected
+      options:
+        - label: Server domain (catalogue, rules, pricing, quotes)
+        - label: MCP server
+        - label: REST API
+        - label: WebMCP adapter
+        - label: Web pages
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Expected behaviour
+      description: The behaviour the first failing test will assert.
+    validations:
+      required: true
+  - type: input
+    id: requirement
+    attributes:
+      label: Related requirement
+      description: The README or PRD requirement this touches, if any.

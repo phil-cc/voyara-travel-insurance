@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en-AU">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Your quotes - Voyara</title>
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body>
+    <header><strong>Voyara</strong><span>Travel insurance (fictitious demo)</span></header>
+    <main>
+      <h1>Your quotes</h1>
+      <p id="trip-summary" class="meta"></p>
+      <p id="status" role="status">Loading prices...</p>
+      <p id="medical" class="notice" hidden>A medical assessment is required for travellers aged 75 or over. The traveller answers the questions themselves.</p>
+      <div id="cards" class="cards"></div>
+
+      <section id="selection" class="panel" hidden aria-live="polite">
+        <h2>Your selection: <span id="selected-name"></span></h2>
+        <div class="field">
+          <label for="excess">Excess</label>
+          <select id="excess"></select>
+        </div>
+        <fieldset class="field packs">
+          <legend>Add-on packs</legend>
+          <div id="packs"></div>
+          <p id="pack-message" class="notice" role="alert" hidden></p>
+        </fieldset>
+        <p>Total: <span id="selected-total" class="total"></span></p>
+        <button type="button" id="proceed" class="primary">Proceed to checkout</button>
+      </section>
+
+      <h2>What each tier covers</h2>
+      <div id="inclusions"></div>
+      <div id="disclosure" class="disclosure"></div>
+      <p><a href="/quote/">Change trip details</a></p>
+    </main>
+    <script type="module" src="/src/pages/results.ts"></script>
+  </body>
+</html>

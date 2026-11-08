@@ -1,0 +1,28 @@
+[project]
+name = "voyara"
+version = "0.1.0"
+description = "Voyara Travel Insurance reference Quote API and MCP server (fictitious)"
+requires-python = ">=3.12"
+dependencies = [
+    "mcp[cli]>=2.3,<3",
+    "fastapi>=0.115",
+    "uvicorn>=0.32",
+    "pydantic>=2",
+    "starlette>=1",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "httpx>=0.27", "anyio>=4"]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/voyara"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[project.scripts]
+voyara-server = "voyara.app:main"

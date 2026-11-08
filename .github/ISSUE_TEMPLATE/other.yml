@@ -1,0 +1,21 @@
+name: Other
+description: Docs, tooling, dependencies, config or refactors
+title: ""
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: Kind
+      options:
+        - Docs
+        - Tooling or config
+        - Dependencies
+        - Refactor
+    validations:
+      required: true
+  - type: textarea
+    id: description
+    attributes:
+      label: What and why
+    validations:
+      required: true
